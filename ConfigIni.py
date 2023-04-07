@@ -6,7 +6,6 @@ class ConfigIni:
     
     - An application name is used for the .ini file. 
     - The file will be stored in ~/.config/appName/appName.ini
-    - There will be one section, named with the applcation name, in the .ini file
     - The constructor provides a list of sections, keys and default values.
 
     '''
