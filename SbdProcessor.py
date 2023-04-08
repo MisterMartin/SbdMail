@@ -115,11 +115,15 @@ class SbdProcessor:
 
         Return a list of message ids.
         '''
-        date = (datetime.date.today() - datetime.timedelta(int(self.args['days']))).strftime("%d-%b-%Y")
+        date = (datetime.date.today() - datetime.timedelta(int(self.args['days'])-1)).strftime("%d-%b-%Y")
+        sentSince = f'(SINCE "{date}")'
+        subject = f'(SUBJECT "{self.args["subject"]}")'
+        if self.args['verbose']:
+            print('imap query:', sentSince, subject)
         status, data = self.server.search(
             None, 
-            f'(SENTSINCE "{date}")', 
-            f'(SUBJECT "{self.args["subject"]}")'
+            sentSince, 
+            subject
             )
         # TODO Check for return status == 'OK'
         mail_ids = data[0].split()
