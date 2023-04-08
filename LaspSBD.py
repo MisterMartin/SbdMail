@@ -28,8 +28,6 @@ class LaspSBD:
         #print('Iridium GPS Lat: ' + '{:f}'.format(Irid_GPS[0]) + ', Lon: ' + '{:f}'.format(Irid_GPS[1]) + ', Alt: '+ '{:d}'.format(Irid_GPS[2]))
         #print('iMet GPS Lat: ' + '{:f}'.format(IMet_GPS[0]) + ', Lon: ' + '{:f}'.format(IMet_GPS[1]) + ', Alt: '+ '{:d}'.format(Irid_GPS[2]))
         #print('House Keeping Iridium Modem Internal T: ' + '{:f}'.format(HK[0]) + ', Battery V: ' + '{:f}'.format(HK[1]) + ', Frame #: '+ '{:d}'.format(HK[2]))
-        SBD_data = struct.unpack_from('>HHHHHHHHHHHHHHHHBBBHBBHBBHB', msg, offset=22)
+        #SBD_data = struct.unpack_from('>HHHHHHHHHHHHHHHHBBBHBBHBBHB', msg, offset=22)
 
         return data
-
-

@@ -6,11 +6,8 @@ from SbdProcessor import SbdProcessor
 if __name__ == "__main__":
     
     def parseArgs(appName:str) -> (dict, str):
-        '''Get configuration from the ini file and the command line arguments.
-        
-        A tuple containing the arguments and the configuration path are returned'''
+        '''Get configuration from the ini file and the command line arguments.'''
 
-        global VERBOSE
 
         defaults = {
             "Main" : {
@@ -25,9 +22,17 @@ if __name__ == "__main__":
         config = ConfigIni(appName=appName, defaults=defaults)
         config.save()
 
-        parser = ArgumentParser(description="""\
-Get Iridium emails and decode the SBD attachment.
-""")
+        description = f'''
+Arguments not specified on the command line are taken from
+{config.configPath()}.
+Edit that file to set default values. Be careful of sharing it,
+if account/password details are specified there.
+
+Run the program once to create the initial .ini file,
+Then edit that file to set your chosen defaults.
+'''
+
+        parser = ArgumentParser(description=description)
         parser.add_argument("-a", "--account", help="email account",                 action="store", default=config.values()['Main']['EmailAccount'])
         parser.add_argument("-p", "--password",help="mailbox password",              action="store", default=config.values()['Main']['EmailPassword'])
         parser.add_argument("-s", "--subject", help="subject contains [SBD Msg]",    action="store", default=config.values()['Main']['SearchSubject'])
@@ -37,8 +42,6 @@ Get Iridium emails and decode the SBD attachment.
         parser.add_argument('-j', '--json',    help='output json instead of text',   action='store_true')
         parser.add_argument("-v", "--verbose", help="verbose",                       action="store_true", default = False)
         args = parser.parse_args()
-
-        VERBOSE = args.verbose
 
         if not (args.account and args.password):
             parser.print_help()
@@ -51,10 +54,6 @@ Get Iridium emails and decode the SBD attachment.
         return(args)
 
     args = parseArgs('SbdMail')
-    print(args)
-
-    print(f'Arguments not specified on the command line are taken from {args["configPath"]}.')
-    print(f'Edit that file to set default values. Be careful of sharing it, if account/password details are specified there.')
 
     processor = SbdProcessor(args=args)
     processor.process()

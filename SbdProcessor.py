@@ -56,11 +56,28 @@ class SbdProcessor:
         # calling function to check for email under this label
         self.server.select('Inbox')
         
+    def display(self, data:dict)->None:
+        '''Print the parsed message'''
+        if self.args['json']:
+            print(json.dumps(data))
+        else:
+            print(
+                f"{data['dateSent']} ",
+                f"Iridium GPS Lat:{data['iridium']['lat']:.4f}",
+                f"Lon: {data['iridium']['lon']:.4f}",
+                f"Alt: {data['iridium']['alt']:d}",
+                f"iMet GPS Lat:{data['imet']['lat']:.4f}",
+                f"Lon: {data['imet']['lon']:.4f}",
+                f"Iridium IntT: {data['iridium']['intT']:.1f}",
+                f"Iridium batV: {data['iridium']['batV']:.1f}",
+                f"Iridium frame: {data['iridium']['frame']:.0f}"
+        )
+        
     def process(self)->None:
         sbdDecoder = LaspSBD()
         msg_ids = self.search()
-        print(type(msg_ids))
-        # Process from newer to older
+
+        # Process each message
         for msg_id in msg_ids:
             msg = self.get_email(msg_id).decode()
             if self.VERBOSE:
@@ -77,10 +94,9 @@ class SbdProcessor:
                     # Put the date in first so that it will be at the beginning of the dictionary
                     data = {'dateSent': dateSent.isoformat()}
                     data.update(sbdDecoder.decode(msg=payloadBytes))
-                    if self.args['json']:
-                        print(f'{json.dumps(data)}')
-                    else:
-                        print(f'{msg_id.decode()}: {data}')
+
+                    self.display(data)
+
                     if (self.args['keep']):
                         filename = part.get_filename()
                         path = os.path.abspath(f'{self.args["keep"]}/{filename}')
