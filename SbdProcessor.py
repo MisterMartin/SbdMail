@@ -8,6 +8,19 @@ import json
 from LaspSBD import LaspSBD
 
 '''
+An interface for fetching Iridium SBD messages with LASP specific attachments
+
+The attachments are decoded and avaiable as a dictionary.
+
+Each email attachment is saved as a file.
+
+This class is very specific to the structure of the Iridium generated
+SBD emails. They are MIME encoded, with one base64 attachment. For some
+reason, the message parts all have a content type of 'multipart', and
+we simply pull the attachment out of the first part which has one.
+
+The code will almost certainly not work with emails that don't follow this
+structure.
 
 See RFC 2060 (Section 6.4.4) for documentation on the IMAP search query syntax
 https://datatracker.ietf.org/doc/html/rfc2060.html
@@ -18,6 +31,18 @@ class SbdProcessor:
     VERBOSE = False
 
     def __init__(self, args:dict)->None:
+        '''SbdProcessor constructor.
+
+        args is a dictionary which must contain the following elements:
+            args['imap']: str, the email imap server URL.
+            args['account']: str, the email account on the server.
+            args['password']: str: the email account password or applocation key.
+            args['subject']: str: the imap email subject to search for.
+            args['days']: str: An integer (string), the number of days to look back on the imap server.
+            args['keep']: str: The directory to save the message files to.
+            args['json']: bool: If true, print JSON rather than human format.
+            args['verbose']: True/False
+        '''
 
         self.args = args
         self.VERBOSE = self.args['verbose']
@@ -64,32 +89,38 @@ class SbdProcessor:
                         if self.VERBOSE:
                             print(f'saved to {path}')
                         f.close()
-    # Function to get email content part i.e its body part
-    def get_body(self, msg):
-        if msg.is_multipart():
-            return get_body(msg.get_payload(0))
-        else:
-            return msg.get_payload(None, True)
     
     def search(self):
+        '''Query the imap server for messages
+
+        The search terms will be for messages whose subject contain self.args['subject'],
+        and were sent within the last self.args['days'].
+
+        Return a list of message ids.
+        '''
         date = (datetime.date.today() - datetime.timedelta(int(self.args['days']))).strftime("%d-%b-%Y")
         status, data = self.server.search(
             None, 
             f'(SENTSINCE "{date}")', 
             f'(SUBJECT "{self.args["subject"]}")'
             )
-    # Check for return status == 'OK'
+        # TODO Check for return status == 'OK'
         mail_ids = data[0].split()
         if self.VERBOSE:
             print(f'Email search returned status:{status}, number of msgs:{len(mail_ids)}, msg ids:{mail_ids}')
         return mail_ids
     
-    # Function to get the list of emails under this label
     def get_email(self, mail_id):
+        '''Fetch the email with the message id: mail_id
+        
+        It is fetched from the imap server. This can be a tedious
+        process on a slow Internet connection.
+        '''
+
         if self.VERBOSE:
             print(f'***** fetching message {mail_id}')
         status, data = self.server.fetch(mail_id, '(RFC822)')
-        # check for status 'ok'
+        # TODO: Check for status 'ok'
         msg = data[0][1]
         return msg
 
