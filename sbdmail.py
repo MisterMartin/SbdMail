@@ -1,10 +1,18 @@
 import os
+import signal
+import sys
 from argparse import ArgumentParser
 from ConfigIni import ConfigIni
 from SbdProcessor import SbdProcessor
 
 if __name__ == "__main__":
-    
+    def sigint_handler(x, y):
+        '''Catch SIGINT so that we can terminate without a backtrace
+        '''
+        print('')
+        print(f'{sys.argv[0]} terminated by SIGINT')
+        sys.exit(0)
+
     def parseArgs(appName:str) -> (dict, str):
         '''Get configuration from the ini file and the command line arguments.'''
 
@@ -54,6 +62,9 @@ Then edit that file to set your chosen defaults.
         return(args)
 
     args = parseArgs('SbdMail')
+
+    # Catch SIGINT
+    signal.signal(signal.SIGINT, sigint_handler)
 
     processor = SbdProcessor(args=args)
     processor.process()
