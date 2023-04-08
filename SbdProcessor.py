@@ -78,6 +78,7 @@ class SbdProcessor:
         msg_ids = self.search()
 
         # Process each message
+        msg_ids.reverse()
         for msg_id in msg_ids:
             msg = self.get_email(msg_id).decode()
             if self.VERBOSE:
