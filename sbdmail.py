@@ -22,7 +22,6 @@ if __name__ == "__main__":
                 "EmailAccount" : "myemail@gmail.com",
                 "EmailPassword": "hidden",
                 "SearchSubject": "SBD Msg",
-                "DaysToSearch": "2",
                 "ImapServer": "imap.gmail.com",
                 "KeepFilesDirectory": "~/"
             }
@@ -43,15 +42,16 @@ Then edit that file to set your chosen defaults.
         parser = ArgumentParser(description=description)
         parser.add_argument("-a", "--account", help="email account",                 action="store", default=config.values()['Main']['EmailAccount'])
         parser.add_argument("-p", "--password",help="mailbox password",              action="store", default=config.values()['Main']['EmailPassword'])
-        parser.add_argument("-s", "--subject", help="subject contains [SBD Msg]",    action="store", default=config.values()['Main']['SearchSubject'])
-        parser.add_argument("-d", "--days",    help="last N days [2]",               action="store", default=config.values()['Main']['DaysToSearch'])
+        parser.add_argument("-t", "--subject", help="subject contains [SBD Msg]",    action="store", default=config.values()['Main']['SearchSubject'])
+        parser.add_argument("-b", "--begin",   help="since date (d-MMM-yyyy) UTC (e.g. 1-jan-2023)",   action="store")
+        parser.add_argument("-e", "--end",     help="end date (d-MMM-yyyy) UTC (e.g. 1-jan-2023, does not include this day)", action="store")
         parser.add_argument("-i", "--imap",    help="imap server [imap.gmail.com]",  action="store", default=config.values()['Main']['ImapServer'])
         parser.add_argument("-k", "--keep",    help="keep message in directory",     action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         parser.add_argument('-j', '--json',    help='output json instead of text',   action='store_true')
         parser.add_argument("-v", "--verbose", help="verbose",                       action="store_true", default = False)
         args = parser.parse_args()
 
-        if not (args.account and args.password):
+        if not (args.account and args.password and args.begin and args.end):
             parser.print_help()
             sys.exit(1) 
 

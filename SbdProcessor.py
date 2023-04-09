@@ -1,5 +1,5 @@
 import imaplib
-import datetime
+from datetime import datetime
 import email
 import base64
 import os
@@ -38,7 +38,8 @@ class SbdProcessor:
             args['account']: str, the email account on the server.
             args['password']: str: the email account password or applocation key.
             args['subject']: str: the imap email subject to search for.
-            args['days']: str: An integer (string), the number of days to look back on the imap server.
+            args['begin']: str: Begin date (dd-mm-yyyy).
+            args['end']: str: End date (dd-mm-yyyy)
             args['keep']: str: The directory to save the message files to.
             args['json']: bool: If true, print JSON rather than human format.
             args['verbose']: True/False
@@ -84,7 +85,7 @@ class SbdProcessor:
             if self.VERBOSE:
                 print(msg)
             m = email.message_from_string(msg)
-            dateSent = datetime.datetime.strptime( m['date'].strip(), '%d %b %Y %H:%M:%S %z')
+            dateSent = datetime.strptime( m['date'].strip(), '%d %b %Y %H:%M:%S %z')
             for part in m.walk():
                 if(part.get_content_disposition() == 'attachment'):
                     payload = part.get_payload()
@@ -115,14 +116,15 @@ class SbdProcessor:
 
         Return a list of message ids.
         '''
-        date = (datetime.date.today() - datetime.timedelta(int(self.args['days'])-1)).strftime("%d-%b-%Y")
-        sentSince = f'(SINCE "{date}")'
+        beginDate = (datetime.strptime(self.args['begin'], '%d-%b-%Y')).strftime("%d-%b-%Y")
+        endDate = (datetime.strptime(self.args['end'], '%d-%b-%Y')).strftime("%d-%b-%Y")
+        dates = f'(SINCE "{beginDate}" BEFORE "{endDate}")'
         subject = f'(SUBJECT "{self.args["subject"]}")'
         if self.args['verbose']:
-            print('imap query:', sentSince, subject)
+            print('imap query:', dates, subject)
         status, data = self.server.search(
             None, 
-            sentSince, 
+            dates, 
             subject
             )
         # TODO Check for return status == 'OK'
