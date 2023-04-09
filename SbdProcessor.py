@@ -5,6 +5,7 @@ import base64
 import os
 import struct
 import json
+import time
 from LaspSBD import LaspSBD
 
 '''
@@ -42,6 +43,7 @@ class SbdProcessor:
             args['end']: str: End date (dd-mm-yyyy)
             args['keep']: str: The directory to save the message files to.
             args['json']: bool: If true, print JSON rather than human format.
+            args['repeatSecs']: int: Number of seconds to wait and repeat; 0 if none
             args['verbose']: True/False
         '''
 
@@ -76,37 +78,44 @@ class SbdProcessor:
         
     def process(self)->None:
         sbdDecoder = LaspSBD()
-        msg_ids = self.search()
 
-        # Process each message
-        msg_ids.reverse()
-        for msg_id in msg_ids:
-            msg = self.get_email(msg_id).decode()
-            if self.VERBOSE:
-                print(msg)
-            m = email.message_from_string(msg)
-            dateSent = datetime.strptime( m['date'].strip(), '%d %b %Y %H:%M:%S %z')
-            for part in m.walk():
-                if(part.get_content_disposition() == 'attachment'):
-                    payload = part.get_payload()
-                    payloadBytes = base64.b64decode(payload)
-                    if self.VERBOSE:
-                        print(payload)
+        while 1:
+            msg_ids = self.search()
 
-                    # Put the date in first so that it will be at the beginning of the dictionary
-                    data = {'dateSent': dateSent.isoformat()}
-                    data.update(sbdDecoder.decode(msg=payloadBytes))
-
-                    self.display(data)
-
-                    if (self.args['keep']):
-                        filename = part.get_filename()
-                        path = os.path.abspath(f'{self.args["keep"]}/{filename}')
-                        f = open(path, 'w')
-                        f.write(payload)
+            # Process each message
+            msg_ids.reverse()
+            for msg_id in msg_ids:
+                msg = self.get_email(msg_id).decode()
+                if self.VERBOSE:
+                    print(msg)
+                m = email.message_from_string(msg)
+                dateSent = datetime.strptime( m['date'].strip(), '%d %b %Y %H:%M:%S %z')
+                for part in m.walk():
+                    if(part.get_content_disposition() == 'attachment'):
+                        payload = part.get_payload()
+                        payloadBytes = base64.b64decode(payload)
                         if self.VERBOSE:
-                            print(f'saved to {path}')
-                        f.close()
+                            print(payload)
+
+                        # Put the date in first so that it will be at the beginning of the dictionary
+                        data = {'dateSent': dateSent.isoformat()}
+                        data.update(sbdDecoder.decode(msg=payloadBytes))
+
+                        self.display(data)
+
+                        if (self.args['keep']):
+                            filename = part.get_filename()
+                            path = os.path.abspath(f'{self.args["keep"]}/{filename}')
+                            f = open(path, 'w')
+                            f.write(payload)
+                            if self.VERBOSE:
+                                print(f'saved to {path}')
+                            f.close()
+            if self.args['repeatSecs'] == 0:
+                break
+            else:
+                time.sleep(self.args['repeatSecs'])
+
     
     def search(self):
         '''Query the imap server for messages

@@ -48,6 +48,7 @@ Then edit that file to set your chosen defaults.
         parser.add_argument("-i", "--imap",    help="imap server [imap.gmail.com]",  action="store", default=config.values()['Main']['ImapServer'])
         parser.add_argument("-k", "--keep",    help="keep message in directory",     action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         parser.add_argument('-j', '--json',    help='output json instead of text',   action='store_true')
+        parser.add_argument('-r', '--repeat',  help='repeat the down load after REPEAT seconds', action='store', type=int)
         parser.add_argument("-v", "--verbose", help="verbose",                       action="store_true", default = False)
         args = parser.parse_args()
 
@@ -56,10 +57,18 @@ Then edit that file to set your chosen defaults.
             sys.exit(1) 
 
         # Convert args to a dictionary
-        args = vars(args)
+        argsDict = vars(args)
+
         # Add the config path
-        args['configPath'] = config.configPath()
-        return(args)
+        argsDict['configPath'] = config.configPath()
+
+        # Add the repeat time
+        if args.repeat:
+            argsDict['repeatSecs'] = args.repeat
+        else:
+            argsDict['repeatSecs'] = 0
+
+        return(argsDict)
 
     args = parseArgs('SbdMail')
 
