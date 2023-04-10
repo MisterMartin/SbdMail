@@ -43,21 +43,14 @@ class SbdProcessor:
             args['end']: str: End date (dd-mm-yyyy)
             args['keep']: str: The directory to save the message files to.
             args['json']: bool: If true, print JSON rather than human format.
-            args['repeatSecs']: int: Number of seconds to wait and repeat; 0 if none
+            args['repeat']: int: Number of seconds to wait and repeat; 0 if none
             args['verbose']: True/False
         '''
 
         self.args = args
         self.VERBOSE = self.args['verbose']
 
-        # this is done to make SSL connection with GMAIL
-        self.server = imaplib.IMAP4_SSL(self.args['imap'])
-        
-        # logging the user in
-        self.server.login(args['account'], args['password'])
-        
-        # calling function to check for email under this label
-        self.server.select('Inbox')
+        self.connect()
         
     def display(self, data:dict)->None:
         '''Print the parsed message'''
@@ -77,14 +70,17 @@ class SbdProcessor:
         )
         
     def process(self)->None:
+        nProcessed = 0
         sbdDecoder = LaspSBD()
 
         while 1:
+            self.connect()
             msg_ids = self.search()
-
             # Process each message
             msg_ids.reverse()
             for msg_id in msg_ids:
+                if self.args['number'] != 0 and nProcessed >= self.args['number']:
+                    break;
                 msg = self.get_email(msg_id).decode()
                 if self.VERBOSE:
                     print(msg)
@@ -111,10 +107,16 @@ class SbdProcessor:
                             if self.VERBOSE:
                                 print(f'saved to {path}')
                             f.close()
-            if self.args['repeatSecs'] == 0:
+                        
+                        nProcessed += 1
+
+            if self.args['repeat'] == 0:
                 break
             else:
-                time.sleep(self.args['repeatSecs'])
+                self.disconnect()
+                time.sleep(self.args['repeat'])
+                print()
+                nProcessed = 0
 
     
     def search(self):
@@ -156,3 +158,16 @@ class SbdProcessor:
         msg = data[0][1]
         return msg
 
+    def connect(self)->None:
+        # this is done to make SSL connection with GMAIL
+        self.server = imaplib.IMAP4_SSL(self.args['imap'])
+        
+        # logging the user in
+        self.server.login(self.args['account'], self.args['password'])
+        
+        # calling function to check for email under this label
+        self.server.select('Inbox')
+
+    def disconnect(self)->None:
+        self.server.close()
+        self.server.logout()

@@ -46,9 +46,10 @@ Then edit that file to set your chosen defaults.
         parser.add_argument("-b", "--begin",   help="since date (d-MMM-yyyy) UTC (e.g. 1-jan-2023)",   action="store")
         parser.add_argument("-e", "--end",     help="end date (d-MMM-yyyy) UTC (e.g. 1-jan-2023, does not include this day)", action="store")
         parser.add_argument("-i", "--imap",    help="imap server [imap.gmail.com]",  action="store", default=config.values()['Main']['ImapServer'])
+        parser.add_argument("-n", "--number",  help="report the last NUMBER msgs (0==all)",   action="store", default=0, type=int)
         parser.add_argument("-k", "--keep",    help="keep message in directory",     action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         parser.add_argument('-j', '--json',    help='output json instead of text',   action='store_true')
-        parser.add_argument('-r', '--repeat',  help='repeat the down load after REPEAT seconds', action='store', type=int)
+        parser.add_argument('-r', '--repeat',  help='repeat the down load after REPEAT seconds (0 == no repeat)', action='store', default=0, type=int)
         parser.add_argument("-v", "--verbose", help="verbose",                       action="store_true", default = False)
         args = parser.parse_args()
 
@@ -61,12 +62,6 @@ Then edit that file to set your chosen defaults.
 
         # Add the config path
         argsDict['configPath'] = config.configPath()
-
-        # Add the repeat time
-        if args.repeat:
-            argsDict['repeatSecs'] = args.repeat
-        else:
-            argsDict['repeatSecs'] = 0
 
         return(argsDict)
 
