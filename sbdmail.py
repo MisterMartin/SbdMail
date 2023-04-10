@@ -40,8 +40,10 @@ Arguments not specified on the command line are taken from
 
 Run the program once to create the initial .ini file, (it will give errors),
 and then edit {config.configPath()}
-**Be careful of sharing this file, if account/password details
-are specified there.**
+
+**Be careful of sharing this file, if account/password details are specified there.**
+
+**You may need to specify an end date one day in the future to retreive very recent messages**
 '''
 
         epilog = f'''
