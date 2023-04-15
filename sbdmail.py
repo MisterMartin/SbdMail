@@ -60,7 +60,7 @@ Note: some arguments may already be specified in {config.configPath()}.
         required.add_argument("-i", "--imap",    help="imap server [imap.gmail.com]",  action="store", default=config.values()['Main']['ImapServer'])
         optional = parser.add_argument_group('optional arguments')
         optional.add_argument("-n", "--number",  help="(optional) report the last NUMBER msgs (0==all)",   action="store", default=0, type=int)
-        optional.add_argument("-k", "--keep",    help="(optional) keep message in directory",     action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
+        optional.add_argument("-k", "--keep",    help="(optional) keep messages in directory",    action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         optional.add_argument('-j', '--json',    help='(optional) output json instead of text',   action='store_true')
         optional.add_argument('-r', '--repeat',  help='(optional) repeat the download after REPEAT seconds (0 == no repeat)', action='store', default=0, type=int)
         optional.add_argument("-v", "--verbose", help="(optional) verbose",                       action="store_true", default = False)

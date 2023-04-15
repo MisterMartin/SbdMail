@@ -1,11 +1,15 @@
 import struct
 
 class LaspSBD:
+    MIN_LENGTH = 23
+
     def __init__(self):
         pass
 
     def decode(self, msg: bytes)->dict:
-
+        # Minimum message length
+        if len(msg) < self.MIN_LENGTH:
+            raise ValueError(f'message length less than {self.MIN_LENGTH}')
         data = dict()
         data['iridium'] = {}
         data['imet'] = {}

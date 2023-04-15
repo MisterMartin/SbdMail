@@ -95,19 +95,24 @@ class SbdProcessor:
 
                         # Put the date in first so that it will be at the beginning of the dictionary
                         data = {'dateSent': dateSent.isoformat()}
-                        data.update(sbdDecoder.decode(msg=payloadBytes))
 
-                        self.display(data)
+                        try:
+                            data.update(sbdDecoder.decode(msg=payloadBytes))
 
-                        if (self.args['keep']):
-                            filename = part.get_filename()
-                            path = os.path.abspath(f'{self.args["keep"]}/{filename}')
-                            f = open(path, 'w')
-                            f.write(payload)
-                            if self.VERBOSE:
-                                print(f'saved to {path}')
-                            f.close()
-                        
+                            self.display(data)
+
+                            if (self.args['keep']):
+                                filename = part.get_filename()
+                                path = os.path.abspath(f'{self.args["keep"]}/{filename}')
+                                f = open(path, 'w')
+                                f.write(payload)
+                                if self.VERBOSE:
+                                    print(f'saved to {path}')
+                                f.close()
+                        except ValueError as e:
+                            print(f'Error decoding an attachment: {e}')
+                            print(f'Email on {dateSent}')
+
                         nProcessed += 1
 
             if self.args['repeat'] == 0:
