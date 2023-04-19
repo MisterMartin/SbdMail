@@ -47,7 +47,8 @@ and then edit {config.configPath()}
 '''
 
         epilog = f'''
-Note: some arguments may already be specified in {config.configPath()}.
+Note: some arguments may already be specified in {config.configPath()}. 
+You will need an application key to connect to a Gmail IMAP server.
 '''
 
         parser = ArgumentParser(description=description, epilog=epilog, formatter_class=RawTextHelpFormatter)
@@ -59,10 +60,10 @@ Note: some arguments may already be specified in {config.configPath()}.
         required.add_argument("-e", "--end",     help="end date (d-MMM-yyyy) UTC (e.g. 1-jan-2023, does not include this day)", action="store")
         required.add_argument("-i", "--imap",    help="imap server [imap.gmail.com]",  action="store", default=config.values()['Main']['ImapServer'])
         optional = parser.add_argument_group('optional arguments')
-        optional.add_argument("-n", "--number",  help="(optional) report the last NUMBER msgs (0==all)",   action="store", default=0, type=int)
+        optional.add_argument("-n", "--number",  help="(optional) report the last NUMBER msgs",   action="store", default=0, type=int)
         optional.add_argument("-k", "--keep",    help="(optional) keep messages in directory",    action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         optional.add_argument('-j', '--json',    help='(optional) output json instead of text',   action='store_true')
-        optional.add_argument('-r', '--repeat',  help='(optional) repeat the download after REPEAT seconds (0 == no repeat)', action='store', default=0, type=int)
+        optional.add_argument('-r', '--repeat',  help='(optional) repeat the download after REPEAT seconds', action='store', default=0, type=int)
         optional.add_argument("-v", "--verbose", help="(optional) verbose",                       action="store_true", default = False)
         args = parser.parse_args()
 
@@ -83,5 +84,9 @@ Note: some arguments may already be specified in {config.configPath()}.
     # Catch SIGINT
     signal.signal(signal.SIGINT, sigint_handler)
 
+    # Create the message processor
     processor = SbdProcessor(args=args)
+
+    # Run the processor. It will return after all messages have
+    # been processed, or forever if the repeat was specified.
     processor.process()
