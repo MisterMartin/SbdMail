@@ -148,15 +148,10 @@ class SbdProcessor:
 
         beginDate = (datetime.strptime(self.args['begin'], '%d-%b-%Y')).strftime("%d-%b-%Y")
         endDate = (datetime.strptime(self.args['end'], '%d-%b-%Y')).strftime("%d-%b-%Y")
-        dates = f'(SINCE "{beginDate}" BEFORE "{endDate}")'
-        subject = f'(SUBJECT "{self.args["subject"]}")'
+        criteria = f'(OR SENTSINCE "{beginDate}" SENTBEFORE "{endDate}" SUBJECT "{self.args["subject"]}")'
         if self.args['verbose']:
-            print('imap query:', dates, subject)
-        status, data = self.server.search(
-            None, 
-            dates, 
-            subject
-            )
+            print('imap criteria:', criteria)
+        status, data = self.server.uid('search', None, criteria)
         # TODO Check for return status == 'OK'
         mail_ids = data[0].split()
         if self.VERBOSE:
@@ -172,8 +167,10 @@ class SbdProcessor:
 
         if self.VERBOSE:
             print(f'***** fetching message {mail_id}')
-        status, data = self.server.fetch(mail_id, '(RFC822)')
+        status, data = self.server.uid('fetch', mail_id, '(RFC822)')
         # TODO: Check for status 'ok'
+        if self.VERBOSE:
+            print(status, data)
         msg = data[0][1]
         return msg
 
