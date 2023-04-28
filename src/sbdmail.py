@@ -6,7 +6,7 @@ from argparse import RawTextHelpFormatter
 from ConfigIni import ConfigIni
 from SbdProcessor import SbdProcessor
 
-if __name__ == "__main__":
+def main():
     def sigint_handler(x, y):
         '''Catch SIGINT so that we can terminate without a backtrace
         '''
@@ -90,3 +90,6 @@ You will need an application key to connect to a Gmail IMAP server.
     # Run the processor. It will return after all messages have
     # been processed, or forever if the repeat was specified.
     processor.process()
+
+if __name__ == "__main__":
+    main()
