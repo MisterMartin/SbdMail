@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SbdMail"
+version = "1.0.0"
+dependencies = [
+]
+authors = [
+  { name="MisterMartin", email="mistermartin@users.noreply.github.com" },
+]
+description = "Retreive and process Iridium SBD emails"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/MisterMartin/SbdMail"
+"Bug Tracker" = "https://github.com/MisterMartin/SbdMail"
