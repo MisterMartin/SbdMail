@@ -1,0 +1,11 @@
+LICENSE
+README.md
+pyproject.toml
+src/ConfigIni.py
+src/LaspSBD.py
+src/SbdMail.py
+src/SbdProcessor.py
+src/SbdMail.egg-info/PKG-INFO
+src/SbdMail.egg-info/SOURCES.txt
+src/SbdMail.egg-info/dependency_links.txt
+src/SbdMail.egg-info/top_level.txt
