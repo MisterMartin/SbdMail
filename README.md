@@ -7,8 +7,16 @@ attachments may be saved as files.
 
 A configuration file is written in `~/.config/SbdMail/SbdMail.ini`
 
-```sh
-python3 sbdmail.py 
+## Installation 
+
+You can download this repository and work from there. But better yet, you can 
+use pip to install it and then run the module:
+
+```
+pip3 install git+https://github.com/MisterMartin/SbdMail.git
+    
+python3 -m SbdMail -h
+
 usage: sbdmail.py [-h] [-a ACCOUNT] [-p PASSWORD] [-t SUBJECT] [-b BEGIN] [-e END] [-i IMAP] [-n NUMBER] [-k KEEP] [-j] [-r REPEAT] [-v]
 
 Fetch recent Iridium email messages and decode them as text or json.
