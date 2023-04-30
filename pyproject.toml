@@ -1,18 +1,20 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "SbdMail"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
   { name="MisterMartin", email="mistermartin@users.noreply.github.com" },
 ]
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
 description = "Retreive and process Iridium SBD emails"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GPL License",
     "Operating System :: OS Independent",
 ]
 
