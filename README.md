@@ -13,7 +13,7 @@ You can download this repository and work from there. But better yet, you can
 use pip to install it and then run the module:
 
 ```
-pip3 install git+https://github.com/MisterMartin/SbdMail.git
+pip3 install git+https://github.com/MisterMartin/SbdMail
     
 python3 -m SbdMail -h
 
