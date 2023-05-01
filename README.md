@@ -17,7 +17,7 @@ pip3 install git+https://github.com/MisterMartin/SbdMail
     
 python3 -m SbdMail -h
 
-usage: sbdmail.py [-h] [-a ACCOUNT] [-p PASSWORD] [-t SUBJECT] [-b BEGIN] [-e END] [-i IMAP] [-n NUMBER] [-k KEEP] [-j] [-r REPEAT] [-v]
+usage: __main__.py [-h] [-a ACCOUNT] [-p PASSWORD] [-t SUBJECT] [-b BEGIN] [-e END] [-i IMAP] [-n NUMBER] [-k KEEP] [-j] [-r REPEAT] [-c] [-v]
 
 Fetch recent Iridium email messages and decode them as text or json.
 If --keep is specified, the message attachments will be saved:
@@ -29,11 +29,11 @@ Arguments not specified on the command line are taken from
 Run the program once to create the initial .ini file, (it will give errors),
 and then edit /Users/charlie/.config/SbdMail/SbdMail.ini
 
-**Be careful of sharing this file, if account/password details are specified there.**
+** Be careful of sharing this file, if account/password details are specified there.**
 
-**You may need to specify an end date one day in the future to retreive very recent messages**
+** You may need to specify an end date one day in the future to retreive very recent messages. **
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
 
 required arguments:
@@ -50,12 +50,14 @@ required arguments:
 
 optional arguments:
   -n NUMBER, --number NUMBER
-                        (optional) report the last NUMBER msgs (0==all)
+                        (optional) report the last NUMBER msgs
   -k KEEP, --keep KEEP  (optional) keep messages in directory
   -j, --json            (optional) output json instead of text
   -r REPEAT, --repeat REPEAT
-                        (optional) repeat the download after REPEAT seconds (0 == no repeat)
+                        (optional) repeat the download after REPEAT seconds
+  -c, --config          Print the configuration (including switches) and exit
   -v, --verbose         (optional) verbose
 
-Note: some arguments may already be specified in /Users/charlie/.config/SbdMail/SbdMail.ini.
+Note: some arguments may already be specified in ~/.config/SbdMail/SbdMail.ini. 
+You will need an application key to connect to a Gmail IMAP server.
 ```
