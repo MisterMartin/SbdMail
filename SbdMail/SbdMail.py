@@ -1,6 +1,7 @@
 import os
 import signal
 import sys
+import pprint
 from argparse import ArgumentParser
 from argparse import RawTextHelpFormatter
 from ConfigIni import ConfigIni
@@ -41,9 +42,9 @@ Arguments not specified on the command line are taken from
 Run the program once to create the initial .ini file, (it will give errors),
 and then edit {config.configPath()}
 
-**Be careful of sharing this file, if account/password details are specified there.**
+** Be careful of sharing this file, if account/password details are specified there.**
 
-**You may need to specify an end date one day in the future to retreive very recent messages**
+** You may need to specify an end date one day in the future to retreive very recent messages. **
 '''
 
         epilog = f'''
@@ -64,18 +65,24 @@ You will need an application key to connect to a Gmail IMAP server.
         optional.add_argument("-k", "--keep",    help="(optional) keep messages in directory",    action="store", default=os.path.expanduser(config.values()['Main']['KeepFilesDirectory']))
         optional.add_argument('-j', '--json',    help='(optional) output json instead of text',   action='store_true')
         optional.add_argument('-r', '--repeat',  help='(optional) repeat the download after REPEAT seconds', action='store', default=0, type=int)
+        optional.add_argument('-c', '--config', help='Print the configuration (including switches) and exit', action='store_true', default=False)
         optional.add_argument("-v", "--verbose", help="(optional) verbose",                       action="store_true", default = False)
         args = parser.parse_args()
-
-        if not (args.account and args.password and args.begin and args.end):
-            parser.print_help()
-            sys.exit(1) 
 
         # Convert args to a dictionary
         argsDict = vars(args)
 
         # Add the config path
         argsDict['configPath'] = config.configPath()
+
+        if args.config:
+            pprint.PrettyPrinter(indent=4).pprint(argsDict)
+            sys.exit(0)
+
+        if not (args.account and args.password and args.begin and args.end):
+            print('** Account, password, begin and end are required.')
+            parser.print_help()
+            sys.exit(1) 
 
         return(argsDict)
 
