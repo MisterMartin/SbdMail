@@ -34,7 +34,7 @@ def main():
         description = f'''
 Fetch recent Iridium email messages and decode them as text or json.
 If --keep is specified, the message attachments will be saved:
-python3 sbdmail.py -b 9-apr-2023 11-apr-2023 -n 1
+python3 sbdmail.py -b 9-apr-2023 -e 11-apr-2023 -n 1
 
 Arguments not specified on the command line are taken from
 {config.configPath()}.
